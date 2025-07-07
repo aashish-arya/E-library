@@ -72,7 +72,7 @@ const Login = ({ modalRef }) => {
                             </div>
                             <div className='text-red-500 text-sm'>{errors.password && <span>{errors.password.message}</span>}</div>
                             <div className='flex mt-2 flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center w-[85%]'>
-                                <button type='submit' className='active:scale-90 hover:bg-pink-700 transition-colors duration-400 bg-pink-500 text-white px-5 py-2 rounded-md cursor-pointer'>Login</button>
+                                <button disabled={isSubmitting} type='submit' className='active:scale-90 hover:bg-pink-700 transition-colors duration-400 bg-pink-500 text-white px-5 py-2 rounded-md cursor-pointer'>Login</button>
                                 <p className='mt-4 '>Not registered ?
                                     <NavLink to={'/signup'}><span className=' text-pink-500 cursor-pointer underline'> Sign up!</span></NavLink></p>
                             </div>
