@@ -18,7 +18,6 @@ const Signup = () => {
             const user = {
                 name, email, password
             }
-            // console.log(user)
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/user/signup`, user)
             if (response.data.success) {
                 toast.success('Signup successfully')
@@ -61,7 +60,7 @@ const Signup = () => {
                                 {errors.password ? <div className='font-bold text-red-500 text-sm '>{errors.password && <span>{errors.password.message}</span>}</div> : ""}
 
                                 <div className='flex flex-col justify-start items-start sm:flex-row sm:justify-around gap-4 sm:gap-10 text-nowrap sm:items-center w-[85%]'>
-                                    <button disabled={isSubmitting} className='active:scale-90 hover:bg-pink-700 transition-colors duration-400 bg-pink-500 text-white px-5 py-2 rounded-md cursor-pointer'>Sign Up</button>
+                                    <button disabled={isSubmitting} className='active:scale-90 disabled:cursor-not-allowed hover:bg-pink-700 transition-colors duration-400 bg-pink-500 text-white px-5 py-2 rounded-md cursor-pointer'>Sign Up</button>
                                     <p className='mr-12'>OR?
                                         <NavLink to={'/'} ><span className=' text-pink-500 cursor-pointer underline'> Go To Home</span></NavLink></p>
                                 </div>

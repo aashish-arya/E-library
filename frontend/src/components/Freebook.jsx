@@ -12,7 +12,6 @@ const Freebook = () => {
     const getBooks = async () => {
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/free/books`);
       const freebook = res.data.filter((item) => item.category === 'free');
-      // console.log(freebook)
       setFilterData(freebook)
     }
     getBooks()
