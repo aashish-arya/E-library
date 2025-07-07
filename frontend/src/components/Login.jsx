@@ -22,7 +22,7 @@ const Login = ({ modalRef }) => {
     const onSubmit = async (data) => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/user/login`, data, { withCredentials: true });
-           
+
             if (response.data.success) {
                 toast.success('Loggedin Successfully')
                 setAuthUser(response.data.user)
@@ -36,7 +36,7 @@ const Login = ({ modalRef }) => {
             toast.error(error.response.data.message)
         }
     }
-    
+
     useEffect(() => {
 
     }, [authUser])
