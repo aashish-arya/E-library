@@ -5,8 +5,8 @@ import cors from 'cors';
 import express from "express"
 const app = express();
 
-const port = process.env.PORT;
-const hostname = process.env.HOSTNAME;
+const port = process.env.PORT ||3000;
+const hostname = process.env.HOSTNAME || 'localhost';
 
 import mongoDB from './configs/mongodb.js';
 import bookRoute from './routes/bookRoute.js'
