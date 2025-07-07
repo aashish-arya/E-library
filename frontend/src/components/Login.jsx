@@ -38,7 +38,7 @@ const Login = ({ modalRef }) => {
     }
     
     useEffect(() => {
-        
+
     }, [authUser])
 
     return (
@@ -53,7 +53,7 @@ const Login = ({ modalRef }) => {
                         <div className='flex rounded-md mt-5 border flex-col gap-8 sm:gap-5 py-8  justify-center items-center'>
                             <div className='flex  flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[85%] gap-2 '>
                                 <label className='rounded-md font-bold border py-1 px-7' htmlFor="email">Email :-</label>
-                                <input className='rounded-md py-1 px-2 border-1 outline-none' type="text" name="email" id="email" placeholder='Enter your email..'
+                                <input className='rounded-md w-60 py-1 px-2 border-1 outline-none' type="text" name="email" id="email" placeholder='Enter your email..'
                                     {...register("email", {
                                         required: "Email is required",
                                         pattern: {
@@ -67,7 +67,7 @@ const Login = ({ modalRef }) => {
                             <div className='text-red-500 text-sm '>{errors.email && <span>{errors.email.message}</span>}</div>
                             <div className='flex flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[85%] gap-2 '>
                                 <label className='rounded-md font-bold border py-1 px-3' htmlFor="password">Password :-</label>
-                                <input className='rounded-md py-1 px-2 border-1 outline-none' type="password" name="password" id="password" placeholder='Enter your password..'
+                                <input className='rounded-md w-60 py-1 px-2 border-1 outline-none' type="password" name="password" id="password" placeholder='Enter your password..'
                                     {...register("password", { required: { value: true, message: 'this field is required' }, minLength: { value: 4, message: 'pasword must be greater than 4 alphabets' } })} />
                             </div>
                             <div className='text-red-500 text-sm'>{errors.password && <span>{errors.password.message}</span>}</div>
