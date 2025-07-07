@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@500&display=swap');
+@import "tailwindcss";
+@plugin "daisyui";
+
+
+*{
+  font-family: 'Poppins',sans-serif;
+  box-sizing: border-box;
+}
+::selection{
+  background-color: gray;
+  color: white  ;
+}
+.slick-prev:before,
+.slick-next:before {
+  color: #2b292a !important;
+}
+NavLink:active{
+  background: gray;
+}
+

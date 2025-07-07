@@ -1,0 +1,82 @@
+[
+    {
+        "id": 1,
+        "name": "The Tale Treasury",
+        "title": "Dive into an enchanting collection of timeless tales for young minds.",
+        "price": 210,
+        "category": "story",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 2,
+        "name": "Magical Math Tricks",
+        "title": "Master numbers with fun activities and magical math shortcuts.",
+        "price": 220,
+        "category": "math",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 3,
+        "name": "Alphabet Adventures",
+        "title": "A vibrant journey from A to Z, filled with fun and learning.",
+        "price": 200,
+        "category": "alphabet",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 4,
+        "name": "Rhymes & Rhythm",
+        "title": "Delightful poems crafted to entertain and educate young minds.",
+        "price": 230,
+        "category": "poem",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 5,
+        "name": "Wildlife Wonders",
+        "title": "Discover friendly animals and learn fun facts about them.",
+        "price": 250,
+        "category": "animal",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 6,
+        "name": "Adventures Unleashed",
+        "title": "Exciting journeys and tales packed with thrill and courage.",
+        "price": 199,
+        "category": "adventure",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 7,
+        "name": "Science Explorers",
+        "title": "Mind-blowing science facts that ignite curiosity and wonder.",
+        "price": 249,
+        "category": "science",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 8,
+        "name": "Echoes of History",
+        "title": "Travel back in time and discover the wonders of past empires.",
+        "price": 299,
+        "category": "history",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 9,
+        "name": "Galactic Wonders",
+        "title": "Explore the stars, planets, and secrets of our vast universe.",
+        "price": 220,
+        "category": "space",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    },
+    {
+        "id": 10,
+        "name": "Mystery Chronicles",
+        "title": "Crack clues and solve fun-filled mysteries with clever logic.",
+        "price": 180,
+        "category": "mystery",
+        "image": "https://ih1.redbubble.net/image.5056846383.5984/raf,360x360,075,t,fafafa:ca443f4786.u1.jpg"
+    }
+]
