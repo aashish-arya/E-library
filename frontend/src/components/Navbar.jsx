@@ -25,9 +25,9 @@ const Navbar = () => {
             toast.error("Error", error.message)
         }
     }
-    const handleCourse = () => {
+    const handleBooks = () => {
         if (authUser) {
-            navigate('/course')
+            navigate('/book')
         }
         else {
             toast.error('Please Login First')
@@ -54,7 +54,7 @@ const Navbar = () => {
     const navItems = (
         <>
             <li><NavLink to={'/'}>Home</NavLink></li>
-            <li onClick={handleCourse}><NavLink to={`${authUser ? '/course' : "#"}`}>Course</NavLink></li>
+            <li onClick={handleBooks}><NavLink to={`${authUser ? '/book' : "#"}`}>Books</NavLink></li>
             <li><NavLink to={'/contact'}>Contact</NavLink></li>
             <li><NavLink to={'/about'}>About</NavLink></li>
         </>
@@ -74,7 +74,7 @@ const Navbar = () => {
                                 {navItems}
                             </ul>
                         </div>
-                        <a className=" text-2xl font-bold cursor-pointer">BookStore</a>
+                        <a className=" text-2xl font-bold cursor-pointer">E-Library</a>
                     </div>
                     <div className='navbar-end'>
                         <div className="navbar-center hidden lg:flex">

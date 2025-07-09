@@ -1,8 +1,10 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
-import Course from '../components/Course'
 import Footer from '../components/Footer'
 import { motion } from 'framer-motion'
+import Reader from '../components/Reader';
+
+
 
 const pageVariants = {
     initial: {
@@ -27,16 +29,21 @@ const pageVariants = {
     },
 };
 
-const Courses = () => {
+
+const Readpage = () => {
     return (
         <div>
-            <Navbar />
-            <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="min-h-screen " >
-                <Course />
+            <div>
+                <Navbar />
+            </div>
+            <motion.div variants={pageVariants} initial="initial" animate="animate" exit="exit" className="min-h-[90vh] " >
+                <Reader />
             </motion.div>
-            <Footer />
+            <div>
+                <Footer />
+            </div>
         </div>
     )
 }
 
-export default Courses
+export default Readpage

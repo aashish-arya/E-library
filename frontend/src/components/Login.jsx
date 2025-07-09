@@ -50,7 +50,7 @@ const Login = ({ modalRef }) => {
                         <span onClick={closeLogin} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</span>
                         <h3 className="font-bold text-center text-lg">Login <span className='text-pink-500'>page : )</span> </h3>
 
-                        <div className='flex rounded-md mt-5 border flex-col gap-8 sm:gap-5 py-8  justify-center items-center'>
+                        <div className='flex rounded-md mt-5 border flex-col gap-4 sm:gap-5 py-8  justify-center items-center'>
                             <div className='flex  flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[85%] gap-2 '>
                                 <label className='rounded-md font-bold border py-1 px-7' htmlFor="email">Email :-</label>
                                 <input className='rounded-md w-60 py-1 px-2 border-1 outline-none' type="text" name="email" id="email" placeholder='Enter your email..'
@@ -71,7 +71,7 @@ const Login = ({ modalRef }) => {
                                     {...register("password", { required: { value: true, message: 'this field is required' }, minLength: { value: 4, message: 'pasword must be greater than 4 alphabets' } })} />
                             </div>
                             <div className='text-red-500 text-sm'>{errors.password && <span>{errors.password.message}</span>}</div>
-                            <div className='flex mt-2 flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center w-[85%]'>
+                            <div className='flex mt- flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center w-[85%]'>
                                 <button disabled={isSubmitting} type='submit' className='active:scale-90 disabled:cursor-not-allowed hover:bg-pink-700 transition-colors duration-400 bg-pink-500 text-white px-5 py-2 rounded-md cursor-pointer'>Login</button>
                                 <p className='mt-4 '>Not registered ?
                                     <NavLink to={'/signup'}><span className=' text-pink-500 cursor-pointer underline'> Sign up!</span></NavLink></p>

@@ -5,7 +5,7 @@ import cors from 'cors';
 import express from "express"
 const app = express();
 
-const port = process.env.PORT ||3000;
+const port = process.env.PORT || 3000;
 const hostname = process.env.HOSTNAME || 'localhost';
 
 import mongoDB from './configs/mongodb.js';
@@ -28,12 +28,12 @@ mongoDB() //mongodb connection
 
 
 app.get('/', (req, res) => {
-    res.send('Now i have started the hi')
+  res.send('Now i have started the hi')
 })
 // defining Routes
 app.use('/book', bookRoute);
 app.use('/user', userRoute)
 app.use('/free', freeBookRoute)
 app.listen(port, () => {
-    console.log(`server is running on http://${hostname}:${port}`)
+  console.log(`server is running on http://${hostname}:${port}`)
 })

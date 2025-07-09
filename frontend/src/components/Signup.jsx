@@ -53,9 +53,9 @@ const Signup = () => {
                                 </div>
                                 {errors.email ? <div className='font-bold text-red-500 text-sm '>{errors.email && <span>{errors.email.message}</span>}</div> : ""}
 
-                                <div className='flex flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[79%] gap-2 '>
-                                    <label className='rounded-md text-nowrap px-2  font-bold border md:py-1 ' htmlFor="password">Password :-</label>
-                                    <input className='rounded-md py-1 px-1   border-1 outline-none' type="password" name="password" id="password" placeholder='Enter password..' {...register("password", { required: { value: true, message: "Please Fill this field" } })} />
+                                <div className='flex flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[83%] gap-2 '>
+                                    <label className='rounded-md text-nowrap px-1 font-bold border md:py-1 ' htmlFor="password">Password :-</label>
+                                    <input className='rounded-md py-1 px-2  md:w-48 lg:w-auto border-1 outline-none' type="password" name="password" id="password" placeholder='Enter password..' {...register("password", { required: { value: true, message: "Please Fill this field" } })} />
                                 </div>
                                 {errors.password ? <div className='font-bold text-red-500 text-sm '>{errors.password && <span>{errors.password.message}</span>}</div> : ""}
 

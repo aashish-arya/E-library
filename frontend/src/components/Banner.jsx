@@ -1,13 +1,12 @@
 import React from 'react'
 import banner from '../assets/Bannerdownload.png'
-
-
+import { Typewriter } from 'react-simple-typewriter'
 const Banner = () => {
     return (
         <>
             <div className='min-w-screen container px-4 sm:px-20 flex flex-col gap-2 md:flex-row md:justify-center items-center  my-10'>
                 <div className='order-2 md:order-1 w-full md:w-1/2 mt-12 sm:mt-32'>
-                    <div className='space-y-12'>
+                    <div className='space-y-10 sm:space-y-6 px-4 md:space-y-16 lg:space-y-6'>
                         <h1 className='text-4xl font-bold'>Hello, Welcome here to learn something <span className='text-pink-500'>new everyday!!!</span> </h1>
                         <p className='text-xl font-light'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Id natus tenetur adipisci recusandae atque repudiandae facere incidunt doloribus deserunt assumenda. Minima earum ratione tenetur mollitia.</p>
                         <label className="input focus-within:outline-none focus-within:ring-0 focus-within:border-1 validator w-full ">
@@ -25,8 +24,8 @@ const Banner = () => {
                             </svg>
                             <input type="email" placeholder="Email" required />
                         </label>
-                    </div>
                     <button className="btn mt-5 tracking-widest hover:bg-pink-700 rounded-md active:scale-95 bg-pink-500 text-white">Subscribe</button>
+                    </div>
 
 
                 </div>

@@ -8,6 +8,7 @@ import axios from 'axios'
 
 const Freebook = () => {
   const [filterData, setFilterData] = useState([])
+  const [free, setFree] = useState(true)
   useEffect(() => {
     const getBooks = async () => {
       const res = await axios.get(`${import.meta.env.VITE_BACKEND_URI}/free/books`);
@@ -57,13 +58,13 @@ const Freebook = () => {
     <>
       <div className='max-w-screen min-h-[90vh] container px-4 sm:px-20'>
         <div>
-          <h1 className='font-semibold text-xl px-5 md:p-0 pb-2'>Free Offered Courses</h1>
+          <h1 className='font-semibold text-xl px-5 md:p-0 pb-2'>Free Offered Books</h1>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Non quibusdam, inventore possimus asperiores fuga perspiciatis architecto porro aliquam nobis alias unde nostrum quis earum, temporibus similique aspernatur culpa deleniti!</p>
         </div>
         <div className='px-4 sm:px-20 mb-10 mx-auto'>
           <Slider {...settings}>
             {filterData.map((item) => (
-              <Cards item={item} key={item._id} />
+              <Cards item={item} key={item._id} free={free} />
             ))}
           </Slider>
         </div>
