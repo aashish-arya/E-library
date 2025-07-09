@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        const user = await userModel.findOne({ email })
+        const user = await userModel.findOne({ email: email.toLowerCase() })
         if (user) {
             return res.status(400).json({ success: false, message: 'User already exist' })
         }
@@ -16,8 +16,8 @@ const signup = async (req, res) => {
 
         // creating user in database
         const createdUser = await userModel.create({
-            name,
-            email,
+            name: name.toLowerCase(),
+            email: email.toLowerCase(),
             password: hashed
         })
 
@@ -39,7 +39,7 @@ const signup = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await userModel.findOne({ email });
+        const user = await userModel.findOne({ email: email.toLowerCase() });
         if (!user) {
             return res.status(401).json({ success: false, message: 'Invalid credentials' })
         }
@@ -67,7 +67,6 @@ const logout = async (req, res) => {
             httpOnly: true,
             sameSite: 'none',
             secure: true,
-            maxAge: 3600000
         });
         res.status(200).json({ success: true, message: "Logout Succesfully.." })
     } catch (error) {
