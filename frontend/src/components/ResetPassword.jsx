@@ -1,49 +1,80 @@
-import React, { useState } from 'react'
-import { NavLink, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { NavLink, useNavigate, useParams } from 'react-router-dom'
 import { useForm } from "react-hook-form";
-import axios from 'axios'
+import axios from 'axios';
 import toast from 'react-hot-toast'
-import { useAuth } from '../contexts/AuthContext'
 
-const Signup = () => {
+const ResetPassword = () => {
     const navigate = useNavigate();
-    const { setAuthUser } = useAuth();
+    const { token } = useParams();
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
     const { register,
         handleSubmit,
-        reset,
         watch,
         formState: { errors, isSubmitting }
     } = useForm();
 
     const password = watch("password");
 
+    useEffect(() => {
+        if (!token) {
+            toast.error('Invalid reset link');
+            navigate('/forget-password');
+        }
+    }, [token, navigate]);
+
     const onSubmit = async (data) => {
         try {
-            const { name, email, password } = data;
-            const user = {
-                name: name.trim(),
-                email: email.trim(),
-                password
-            }
             const response = await axios.post(
-                `${import.meta.env.VITE_BACKEND_URI}/user/signup`, 
-                user,
-                { withCredentials: true }
-            )
+                `${import.meta.env.VITE_BACKEND_URI}/user/reset-password`, 
+                { 
+                    token: token,
+                    password: data.password 
+                }
+            );
+
             if (response.data.success) {
-                toast.success('Account created successfully!')
-                setAuthUser(response.data.user)
-                localStorage.setItem('user', JSON.stringify(response.data.user))
-                reset();
-                navigate('/')
+                toast.success('Password reset successfully!')
+                setIsSuccess(true);
+                setTimeout(() => {
+                    navigate('/');
+                }, 2000);
             }
         } catch (error) {
-            console.error('Signup error:', error)
-            toast.error(error.response?.data?.message || 'Signup failed. Please try again.')
+            console.error('Reset password error:', error)
+            toast.error(error.response?.data?.message || 'Failed to reset password. Please try again.')
         }
+    }
+
+    if (isSuccess) {
+        return (
+            <div className='min-h-screen flex justify-center items-center bg-gradient-to-br from-pink-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8'>
+                <div className="w-full max-w-md">
+                    <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+                        <div className="mb-6">
+                            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
+                                <svg className="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Password Reset Successful!</h2>
+                        <p className="text-gray-600 mb-6">
+                            Your password has been reset successfully. You can now login with your new password.
+                        </p>
+                        <NavLink 
+                            to="/"
+                            className="btn btn-primary w-full"
+                        >
+                            Go to Login
+                        </NavLink>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -51,68 +82,17 @@ const Signup = () => {
             <div className="w-full max-w-md">
                 <div className="bg-white rounded-2xl shadow-xl p-8">
                     <div className="text-center mb-8">
-                        <h2 className="text-3xl font-bold text-gray-800">Create Account</h2>
-                        <p className="text-sm text-gray-500 mt-2">Sign up to get started</p>
+                        <h2 className="text-3xl font-bold text-gray-800">Reset Password</h2>
+                        <p className="text-sm text-gray-500 mt-2">
+                            Enter your new password below
+                        </p>
                     </div>
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                        {/* Name Field */}
+                        {/* New Password Field */}
                         <div className="form-control w-full">
                             <label className="label">
-                                <span className="label-text font-semibold">Full Name</span>
-                            </label>
-                            <input 
-                                className={`input input-bordered w-full ${errors.name ? 'input-error' : ''}`}
-                                type="text" 
-                                name="name" 
-                                id="name" 
-                                placeholder="Enter your full name"
-                                {...register("name", { 
-                                    required: { value: true, message: 'Name is required' },
-                                    minLength: { value: 2, message: 'Name must be at least 2 characters' },
-                                    pattern: {
-                                        value: /^[a-zA-Z\s]+$/,
-                                        message: 'Name can only contain letters and spaces'
-                                    }
-                                })} 
-                            />
-                            {errors.name && (
-                                <label className="label">
-                                    <span className="label-text-alt text-red-500">{errors.name.message}</span>
-                                </label>
-                            )}
-                        </div>
-
-                        {/* Email Field */}
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text font-semibold">Email Address</span>
-                            </label>
-                            <input 
-                                className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
-                                type="email" 
-                                name="email" 
-                                id="email" 
-                                placeholder="Enter your email"
-                                {...register("email", { 
-                                    required: { value: true, message: 'Email is required' },
-                                    pattern: {
-                                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                        message: 'Please enter a valid email address'
-                                    }
-                                })} 
-                            />
-                            {errors.email && (
-                                <label className="label">
-                                    <span className="label-text-alt text-red-500">{errors.email.message}</span>
-                                </label>
-                            )}
-                        </div>
-
-                        {/* Password Field */}
-                        <div className="form-control w-full">
-                            <label className="label">
-                                <span className="label-text font-semibold">Password</span>
+                                <span className="label-text font-semibold">New Password</span>
                             </label>
                             <div className="relative">
                                 <input 
@@ -120,7 +100,7 @@ const Signup = () => {
                                     type={showPassword ? "text" : "password"} 
                                     name="password" 
                                     id="password" 
-                                    placeholder="Enter password (min 6 characters)"
+                                    placeholder="Enter new password (min 6 characters)"
                                     {...register("password", { 
                                         required: { value: true, message: "Password is required" },
                                         minLength: { value: 6, message: "Password must be at least 6 characters" }
@@ -144,7 +124,7 @@ const Signup = () => {
                         {/* Confirm Password Field */}
                         <div className="form-control w-full">
                             <label className="label">
-                                <span className="label-text font-semibold">Confirm Password</span>
+                                <span className="label-text font-semibold">Confirm New Password</span>
                             </label>
                             <div className="relative">
                                 <input 
@@ -152,7 +132,7 @@ const Signup = () => {
                                     type={showConfirmPassword ? "text" : "password"} 
                                     name="confirmPassword" 
                                     id="confirmPassword" 
-                                    placeholder="Confirm your password"
+                                    placeholder="Confirm new password"
                                     {...register("confirmPassword", { 
                                         required: { value: true, message: "Please confirm your password" },
                                         validate: value => value === password || "Passwords do not match"
@@ -182,24 +162,21 @@ const Signup = () => {
                             {isSubmitting ? (
                                 <>
                                     <span className="loading loading-spinner"></span>
-                                    Creating account...
+                                    Resetting...
                                 </>
                             ) : (
-                                'Sign Up'
+                                'Reset Password'
                             )}
                         </button>
 
-                        {/* Login Link */}
-                        <div className="text-center mt-4">
-                            <p className="text-sm text-gray-600">
-                                Already have an account?{' '}
-                                <NavLink 
-                                    to="/"
-                                    className="text-pink-500 font-semibold hover:text-pink-700 hover:underline"
-                                >
-                                    Login
-                                </NavLink>
-                            </p>
+                        {/* Back to Login Link */}
+                        <div className="text-center">
+                            <NavLink 
+                                to="/"
+                                className="text-sm text-pink-500 hover:text-pink-700 hover:underline"
+                            >
+                                ← Back to Login
+                            </NavLink>
                         </div>
                     </form>
                 </div>
@@ -208,4 +185,4 @@ const Signup = () => {
     )
 }
 
-export default Signup
+export default ResetPassword

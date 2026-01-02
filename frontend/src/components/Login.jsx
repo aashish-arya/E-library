@@ -1,13 +1,14 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import React, { useState } from 'react'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { useForm } from "react-hook-form";
 import axios from 'axios';
 import toast from 'react-hot-toast'
 import { useAuth } from '../contexts/AuthContext';
-import { useEffect } from 'react';
 
 const Login = ({ modalRef }) => {
-    const { authUser, setAuthUser } = useAuth();
+    const { setAuthUser } = useAuth();
+    const navigate = useNavigate();
+    const [showPassword, setShowPassword] = useState(false);
 
     const { register,
         handleSubmit,
@@ -17,14 +18,19 @@ const Login = ({ modalRef }) => {
 
     const closeLogin = () => {
         modalRef.current?.close();
+        reset();
     }
 
     const onSubmit = async (data) => {
         try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/user/login`, data, { withCredentials: true });
+            const response = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URI}/user/login`, 
+                { email: data.email.trim(), password: data.password }, 
+                { withCredentials: true }
+            );
 
             if (response.data.success) {
-                toast.success('Loggedin Successfully')
+                toast.success('Logged in successfully!')
                 setAuthUser(response.data.user)
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 modalRef.current?.close()
@@ -32,54 +38,134 @@ const Login = ({ modalRef }) => {
             }
 
         } catch (error) {
-            console.log(error)
-            toast.error(error.response.data.message)
+            console.error('Login error:', error)
+            toast.error(error.response?.data?.message || 'Login failed. Please try again.')
         }
     }
 
-    useEffect(() => {
-
-    }, [authUser])
-
     return (
-        <div >
-            <dialog ref={modalRef} id="my_modal_3" className="modal z-0">
-                <div className="modal-box">
-                    <form onSubmit={handleSubmit(onSubmit)} method='dialog'>
-                        {/* if there is a button in form, it will close the modal */}
-                        <span onClick={closeLogin} className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</span>
-                        <h3 className="font-bold text-center text-lg">Login <span className='text-pink-500'>page : )</span> </h3>
+        <div>
+            <dialog ref={modalRef} id="login_modal" className="modal z-50">
+                <div className="modal-box w-full max-w-md">
+                    <form onSubmit={handleSubmit(onSubmit)} method='dialog' className="space-y-6">
+                        <button 
+                            type="button"
+                            onClick={closeLogin} 
+                            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                        >
+                            ✕
+                        </button>
+                        
+                        <div className="text-center">
+                            <h3 className="text-2xl font-bold text-gray-800">Welcome Back</h3>
+                            <p className="text-sm text-gray-500 mt-1">Login to your account</p>
+                        </div>
 
-                        <div className='flex rounded-md mt-5 border flex-col gap-4 sm:gap-5 py-8  justify-center items-center'>
-                            <div className='flex  flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[85%] gap-2 '>
-                                <label className='rounded-md font-bold border py-1 px-7' htmlFor="email">Email :-</label>
-                                <input className='rounded-md w-60 py-1 px-2 border-1 outline-none' type="text" name="email" id="email" placeholder='Enter your email..'
+                        <div className="space-y-4">
+                            {/* Email Field */}
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold">Email Address</span>
+                                </label>
+                                <input 
+                                    className={`input input-bordered w-full ${errors.email ? 'input-error' : ''}`}
+                                    type="email" 
+                                    name="email" 
+                                    id="email" 
+                                    placeholder="Enter your email"
                                     {...register("email", {
                                         required: "Email is required",
                                         pattern: {
                                             value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                                            message: "Invalid email address"
+                                            message: "Please enter a valid email address"
                                         }
-                                    }
-                                    )} />
+                                    })} 
+                                />
+                                {errors.email && (
+                                    <label className="label">
+                                        <span className="label-text-alt text-red-500">{errors.email.message}</span>
+                                    </label>
+                                )}
+                            </div>
 
+                            {/* Password Field */}
+                            <div className="form-control w-full">
+                                <label className="label">
+                                    <span className="label-text font-semibold">Password</span>
+                                </label>
+                                <div className="relative">
+                                    <input 
+                                        className={`input input-bordered w-full pr-10 ${errors.password ? 'input-error' : ''}`}
+                                        type={showPassword ? "text" : "password"} 
+                                        name="password" 
+                                        id="password" 
+                                        placeholder="Enter your password"
+                                        {...register("password", { 
+                                            required: { value: true, message: 'Password is required' }, 
+                                            minLength: { value: 6, message: 'Password must be at least 6 characters' } 
+                                        })} 
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                                    >
+                                        {showPassword ? '👁️' : '👁️‍🗨️'}
+                                    </button>
+                                </div>
+                                {errors.password && (
+                                    <label className="label">
+                                        <span className="label-text-alt text-red-500">{errors.password.message}</span>
+                                    </label>
+                                )}
                             </div>
-                            <div className='text-red-500 text-sm '>{errors.email && <span>{errors.email.message}</span>}</div>
-                            <div className='flex flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center  w-[85%] gap-2 '>
-                                <label className='rounded-md font-bold border py-1 px-3' htmlFor="password">Password :-</label>
-                                <input className='rounded-md w-60 py-1 px-2 border-1 outline-none' type="password" name="password" id="password" placeholder='Enter your password..'
-                                    {...register("password", { required: { value: true, message: 'this field is required' }, minLength: { value: 4, message: 'pasword must be greater than 4 alphabets' } })} />
+
+                            {/* Forget Password Link */}
+                            <div className="text-right">
+                                <NavLink 
+                                    to="/forget-password"
+                                    onClick={closeLogin}
+                                    className="text-sm text-pink-500 hover:text-pink-700 hover:underline"
+                                >
+                                    Forgot password?
+                                </NavLink>
                             </div>
-                            <div className='text-red-500 text-sm'>{errors.password && <span>{errors.password.message}</span>}</div>
-                            <div className='flex mt- flex-col sm:flex-row justify-start items-start sm:justify-around sm:items-center w-[85%]'>
-                                <button disabled={isSubmitting} type='submit' className='active:scale-90 disabled:cursor-not-allowed hover:bg-pink-700 transition-colors duration-400 bg-pink-500 text-white px-5 py-2 rounded-md cursor-pointer'>Login</button>
-                                <p className='mt-4 '>Not registered ?
-                                    <NavLink to={'/signup'}><span className=' text-pink-500 cursor-pointer underline'> Sign up!</span></NavLink></p>
+
+                            {/* Submit Button */}
+                            <button 
+                                disabled={isSubmitting} 
+                                type='submit' 
+                                className='btn btn-primary w-full disabled:cursor-not-allowed'
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <span className="loading loading-spinner"></span>
+                                        Logging in...
+                                    </>
+                                ) : (
+                                    'Login'
+                                )}
+                            </button>
+
+                            {/* Sign Up Link */}
+                            <div className="text-center">
+                                <p className="text-sm text-gray-600">
+                                    Don't have an account?{' '}
+                                    <NavLink 
+                                        to="/signup"
+                                        onClick={closeLogin}
+                                        className="text-pink-500 font-semibold hover:text-pink-700 hover:underline"
+                                    >
+                                        Sign up
+                                    </NavLink>
+                                </p>
                             </div>
                         </div>
                     </form>
-
                 </div>
+                <form method="dialog" className="modal-backdrop">
+                    <button onClick={closeLogin}>close</button>
+                </form>
             </dialog>
         </div>
     )

@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext'
 import axios from 'axios'
 const Navbar = () => {
     const navigate = useNavigate()
-    const { authUser, setAuthUser } = useAuth();
+    const { authUser, logout } = useAuth();
     const [sticky, setSticky] = useState(false)
     const modalRef = useRef();
 
@@ -16,13 +16,12 @@ const Navbar = () => {
 
     const handleLogout = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URI}/user/logout`, {}, { withCredentials: true })
-            setAuthUser(null)
-            localStorage.removeItem('user')
-            toast.success("Logout Successfully")
+            await logout();
+            toast.success("Logged out successfully")
             navigate('/')
         } catch (error) {
-            toast.error("Error", error.message)
+            console.error('Logout error:', error)
+            toast.error("Error logging out")
         }
     }
     const handleBooks = () => {
