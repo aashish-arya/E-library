@@ -1,102 +1,153 @@
-# 📚 E-Library Web App
+# Bookstore Application
 
-Welcome to **E-Library**, a full-stack MERN web application that offers users a way to browse and read books online. It features both free and paid books with secure login, smooth UI transitions, and protected routes.
+A full-stack web application for browsing and reading books with user authentication and book management features.
 
-🔗 **Live Demo:** [https://e-library-frontend-eta.vercel.app/](https://e-library-frontend-eta.vercel.app/)
+## Features
 
----
+- **User Authentication**: Sign up, login, and logout functionality
+- **Password Management**: Forget password and reset password via email
+- **Book Management**: Browse paid and free books
+- **Protected Routes**: Access to paid books requires authentication
+- **Reading Interface**: Read books with a dedicated reader page
+- **Responsive Design**: Modern UI built with React and Tailwind CSS
 
-## ✨ Features
+## Tech Stack
 
-### ✅ Public Features (No Login Required)
+### Frontend
+- React 19
+- Vite
+- React Router DOM
+- Tailwind CSS & DaisyUI
+- Axios
+- Framer Motion
+- React Hook Form
+- React Hot Toast
 
-- 📖 Browse **Free Books** directly from the homepage.
-- 🖼️ Image-based **Book Slider** with Framer Motion animations.
-- 📄 Pages available:
-  - Home
-  - About
-  - Contact
-  - Signup/Login (via Modal)
+### Backend
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+- JWT Authentication
+- Bcrypt (Password Hashing)
+- Nodemailer (Email Service)
+- Cookie Parser
 
-### 🔐 Protected Features (Login Required)
-
-- 🔓 View **Paid Books** only after successful login.
-- ✅ JWT-based authentication using **HTTP-only Cookies**.
-- 🧠 Global auth state managed using **React Context API**.
-- ❌ Unauthenticated users can't access the `/book` route.
-
----
-
-## ⚙️ Tech Stack
-
-### Frontend:
-
-- **React.js**
-- **Tailwind CSS**
-- **Framer Motion**
-- **React Router DOM**
-- **React Hook Form**
-- **Axios**
-- **React Hot Toast**
-
-### Backend:
-
-- **Node.js**
-- **Express.js**
-- **MongoDB + Mongoose**
-- **JWT** (JSON Web Token)
-- **bcryptjs**
-
----
-
-## 🔐 Auth Flow
-
-- User signs up or logs in via modal form.
-- Login sends a POST request → receives a token → stored as an HTTP-only cookie.
-- React Context API stores login state in `authUser`.
-- Protected routes (like `/book`) check login state before access.
-
----
-
-## 📁 Folder Structure
+## Project Structure
 
 ```
-src/
+BOOKSTORE/
+├── backend/
+│   ├── configs/          # MongoDB configuration
+│   ├── controllers/       # Route controllers
+│   ├── middlewares/      # Authentication middleware
+│   ├── models/           # Database models
+│   ├── routes/           # API routes
+│   ├── services/         # Email service
+│   └── server.js         # Server entry point
 │
-├── components/
-│   ├── Navbar.jsx
-│   ├── Footer.jsx
-│   ├── Freebook.jsx
-│   ├── Reader.jsx
-│   ├── Signup.jsx
-│   └── Scrolltop.jsx
-│
-├── pages/
-│   ├── Home.jsx
-│   ├── About.jsx
-│   ├── Contact.jsx
-│   ├── Bookspage.jsx
-│   └── Readpage.jsx
-│
-├── contexts/
-│   └── AuthContext.jsx
-│
-├── App.jsx
-├── main.jsx
+└── frontend/
+    ├── src/
+    │   ├── components/    # React components
+    │   ├── contexts/      # Auth context
+    │   ├── pages/         # Page components
+    │   └── assets/        # Static assets
+    └── public/            # Public assets
 ```
 
----
+## Getting Started
 
-## 🧑‍💻 Developer Info
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB (local or cloud instance)
+- npm or yarn
 
-**Aashish Kumar Arya**\
-📧 Email: [ashisharya9058@gmail.com](mailto\:ashisharya9058@gmail.com)\
-🔗 GitHub: [https://github.com/aashish-arya](https://github.com/aashish-arya)\
-🔗 LinkedIn: [https://www.linkedin.com/in/aashish-arya-34065433a/](https://www.linkedin.com/in/aashish-arya-34065433a/)
+### Installation
 
----
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd BOOKSTORE
+   ```
 
-## 📃 License
+2. **Backend Setup**
+   ```bash
+   cd backend
+   npm install
+   ```
+   
+   Create a `.env` file in the backend directory:
+   ```env
+   PORT=3000
+   HOSTNAME=localhost
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASS=your_email_password
+   ```
 
-This project is open-source and free to use for learning purposes.
+3. **Frontend Setup**
+   ```bash
+   cd frontend
+   npm install
+   ```
 
+### Running the Application
+
+1. **Start the Backend Server**
+   ```bash
+   cd backend
+   npm start
+   ```
+   Server will run on `http://localhost:3000`
+
+2. **Start the Frontend Development Server**
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+   Frontend will run on `http://localhost:5173` (default Vite port)
+
+## API Endpoints
+
+### User Routes (`/user`)
+- `POST /user/signup` - User registration
+- `POST /user/login` - User login
+- `POST /user/logout` - User logout
+- `POST /user/forget-password` - Request password reset
+- `POST /user/reset-password` - Reset password with token
+- `GET /user/me` - Get current user (protected)
+
+### Book Routes (`/book`)
+- `GET /book/allbooks` - Get all books (protected)
+- `GET /book/read/:id` - Read a specific book (protected)
+
+### Free Book Routes (`/free`)
+- Free book endpoints (public access)
+
+## Environment Variables
+
+Make sure to set up the following environment variables in your backend `.env` file:
+
+- `PORT` - Server port (default: 3000)
+- `HOSTNAME` - Server hostname (default: localhost)
+- `MONGODB_URI` - MongoDB connection string
+- `JWT_SECRET` - Secret key for JWT tokens
+- `EMAIL_USER` - Email address for sending emails
+- `EMAIL_PASS` - Email password or app password
+
+## Features in Detail
+
+- **Authentication**: JWT-based authentication with secure password hashing
+- **Email Service**: Password reset functionality via email
+- **Protected Routes**: Middleware to protect authenticated routes
+- **Book Categories**: Books organized by categories
+- **Free Books**: Public access to free books
+- **Paid Books**: Protected access requiring user authentication
+
+## License
+
+ISC
+
+## Author
+
+Created as a full-stack bookstore application.
