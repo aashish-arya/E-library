@@ -109,13 +109,37 @@ const getPasswordResetEmailTemplate = (resetLink, userName = 'User') => {
 };
 
 // Send password reset email
-export const sendPasswordResetEmail = async (email, resetToken, userName = null) => {
+export const sendPasswordResetEmail = async (email, resetToken, userName = null, frontendUrl = null) => {
     try {
         const transporter = createTransporter();
         
+        // Determine frontend URL - priority: parameter > env variable > default
+        let frontendBaseUrl = frontendUrl || process.env.FRONTEND_URI;
+        
+        // If still not set, use intelligent defaults based on environment
+        if (!frontendBaseUrl) {
+            if (process.env.NODE_ENV === 'production') {
+                // In production, FRONTEND_URI must be set in environment variables
+                console.error('❌ CRITICAL: FRONTEND_URI not set in production environment!');
+                console.error('⚠️  Password reset links will not work correctly.');
+                console.error('📝 Please set FRONTEND_URI environment variable in your Vercel/deployment settings.');
+                console.error('   Example: FRONTEND_URI=https://your-frontend-app.vercel.app');
+                // Return error instead of throwing to handle gracefully
+                return { 
+                    success: false, 
+                    error: 'FRONTEND_URI environment variable is required in production. Please configure it in your deployment settings.' 
+                };
+            } else {
+                frontendBaseUrl = 'http://localhost:5173';
+            }
+        }
+        
+        // Ensure URL doesn't end with slash
+        frontendBaseUrl = frontendBaseUrl.replace(/\/$/, '');
+        const resetLink = `${frontendBaseUrl}/reset-password/${resetToken}`;
+        
         if (!transporter) {
             // If email service is not configured, log the link for development
-            const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
             console.log('\n========================================');
             console.log('📧 EMAIL SERVICE NOT CONFIGURED');
             console.log('========================================');
@@ -124,8 +148,6 @@ export const sendPasswordResetEmail = async (email, resetToken, userName = null)
             console.log('========================================\n');
             return { success: false, error: 'Email service not configured' };
         }
-
-        const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
         
         const mailOptions = {
             from: `"E-Library" <${process.env.EMAIL_USER}>`,

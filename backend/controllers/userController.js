@@ -154,11 +154,32 @@ const forgetPassword = async (req, res) => {
         user.resetTokenExpiry = resetTokenExpiry;
         await user.save();
 
+        // Get frontend URL from request origin or environment variable
+        // Try to get from request origin first (for dynamic detection)
+        let frontendUrl = process.env.FRONTEND_URI;
+        
+        // If not in env, try to construct from request origin
+        if (!frontendUrl && req.headers.origin) {
+            // Extract origin and use it as frontend URL
+            frontendUrl = req.headers.origin;
+        }
+        
+        // If still not set, use request referer as fallback
+        if (!frontendUrl && req.headers.referer) {
+            try {
+                const refererUrl = new URL(req.headers.referer);
+                frontendUrl = `${refererUrl.protocol}//${refererUrl.host}`;
+            } catch (e) {
+                // If referer parsing fails, continue with env/default
+            }
+        }
+
         // Send password reset email
         const emailResult = await sendPasswordResetEmail(
             user.email, 
             resetToken, 
-            user.name
+            user.name,
+            frontendUrl
         );
 
         // Check if email was sent successfully
@@ -167,7 +188,8 @@ const forgetPassword = async (req, res) => {
             const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
             
             if (isDevelopment && emailResult.error === 'Email service not configured') {
-                const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password/${resetToken}`;
+                const resetLinkBaseUrl = frontendUrl || process.env.FRONTEND_URI || 'http://localhost:5173';
+                const resetLink = `${resetLinkBaseUrl.replace(/\/$/, '')}/reset-password/${resetToken}`;
                 console.log('\n========================================');
                 console.log('🔐 PASSWORD RESET REQUEST');
                 console.log('========================================');
