@@ -119,15 +119,16 @@ export const sendPasswordResetEmail = async (email, resetToken, userName = null,
         // If still not set, use intelligent defaults based on environment
         if (!frontendBaseUrl) {
             if (process.env.NODE_ENV === 'production') {
-                // In production, FRONTEND_URI must be set in environment variables
-                console.error('❌ CRITICAL: FRONTEND_URI not set in production environment!');
-                console.error('⚠️  Password reset links will not work correctly.');
+                // In production, try to log helpful error but don't fail completely
+                console.error('⚠️  WARNING: FRONTEND_URI not set in production environment!');
                 console.error('📝 Please set FRONTEND_URI environment variable in your Vercel/deployment settings.');
                 console.error('   Example: FRONTEND_URI=https://your-frontend-app.vercel.app');
-                // Return error instead of throwing to handle gracefully
+                // Don't return error here - let the controller handle it with the frontendUrl parameter
+                // The controller should have detected it from request headers
                 return { 
                     success: false, 
-                    error: 'FRONTEND_URI environment variable is required in production. Please configure it in your deployment settings.' 
+                    error: 'FRONTEND_URI_MISSING',
+                    message: 'FRONTEND_URI environment variable is recommended in production. Frontend URL should be detected from request headers.' 
                 };
             } else {
                 frontendBaseUrl = 'http://localhost:5173';

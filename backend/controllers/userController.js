@@ -147,7 +147,7 @@ const forgetPassword = async (req, res) => {
 
         // Generate reset token
         const resetToken = crypto.randomBytes(32).toString('hex');
-        const resetTokenExpiry = Date.now() + 15 * 60 * 1000; // 15 minutes
+        const resetTokenExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes from now
 
         // Save reset token to user
         user.resetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
@@ -155,23 +155,37 @@ const forgetPassword = async (req, res) => {
         await user.save();
 
         // Get frontend URL from request origin or environment variable
-        // Try to get from request origin first (for dynamic detection)
-        let frontendUrl = process.env.FRONTEND_URI;
+        // Priority: 1. Request origin/referer (for dynamic detection) 2. Environment variable 3. Default
+        let frontendUrl = null;
         
-        // If not in env, try to construct from request origin
-        if (!frontendUrl && req.headers.origin) {
-            // Extract origin and use it as frontend URL
+        // Try to get from request origin first (works in production with CORS)
+        if (req.headers.origin) {
             frontendUrl = req.headers.origin;
         }
         
-        // If still not set, use request referer as fallback
+        // If still not set, try request referer as fallback
         if (!frontendUrl && req.headers.referer) {
             try {
                 const refererUrl = new URL(req.headers.referer);
                 frontendUrl = `${refererUrl.protocol}//${refererUrl.host}`;
             } catch (e) {
-                // If referer parsing fails, continue with env/default
+                // If referer parsing fails, continue
             }
+        }
+        
+        // If still not set, use environment variable
+        if (!frontendUrl) {
+            frontendUrl = process.env.FRONTEND_URI;
+        }
+        
+        // Log for debugging in production
+        if (process.env.NODE_ENV === 'production') {
+            console.log('Frontend URL detection:', {
+                origin: req.headers.origin,
+                referer: req.headers.referer,
+                envFrontendUri: process.env.FRONTEND_URI,
+                finalFrontendUrl: frontendUrl
+            });
         }
 
         // Send password reset email
@@ -184,36 +198,91 @@ const forgetPassword = async (req, res) => {
 
         // Check if email was sent successfully
         if (!emailResult.success) {
-            // If email service is not configured, return token for development
             const isDevelopment = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+            const isProduction = process.env.NODE_ENV === 'production';
             
-            if (isDevelopment && emailResult.error === 'Email service not configured') {
-                const resetLinkBaseUrl = frontendUrl || process.env.FRONTEND_URI || 'http://localhost:5173';
-                const resetLink = `${resetLinkBaseUrl.replace(/\/$/, '')}/reset-password/${resetToken}`;
-                console.log('\n========================================');
-                console.log('🔐 PASSWORD RESET REQUEST');
-                console.log('========================================');
-                console.log('Email:', user.email);
-                console.log('User:', user.name);
-                console.log('Reset Token:', resetToken);
-                console.log('Reset Link:', resetLink);
-                console.log('========================================\n');
+            // Build reset link for fallback
+            const resetLinkBaseUrl = frontendUrl || process.env.FRONTEND_URI || (isDevelopment ? 'http://localhost:5173' : null);
+            const resetLink = resetLinkBaseUrl ? `${resetLinkBaseUrl.replace(/\/$/, '')}/reset-password/${resetToken}` : null;
+            
+            // If email service is not configured
+            if (emailResult.error === 'Email service not configured') {
+                console.error('❌ Email service not configured in', isProduction ? 'PRODUCTION' : 'development');
+                console.error('Required environment variables: EMAIL_HOST, EMAIL_USER, EMAIL_PASSWORD');
                 
-                return res.status(200).json({ 
-                    success: true, 
-                    message: 'Password reset link generated. Check backend console for the link.',
-                    resetToken: resetToken,
-                    resetLink: resetLink,
-                    emailSent: false
-                })
+                // In development, return token for testing
+                if (isDevelopment) {
+                    console.log('\n========================================');
+                    console.log('🔐 PASSWORD RESET REQUEST (Development Mode)');
+                    console.log('========================================');
+                    console.log('Email:', user.email);
+                    console.log('User:', user.name);
+                    console.log('Reset Token:', resetToken);
+                    if (resetLink) console.log('Reset Link:', resetLink);
+                    console.log('========================================\n');
+                    
+                    return res.status(200).json({ 
+                        success: true, 
+                        message: 'Password reset link generated. Check backend console for the link.',
+                        resetToken: resetToken,
+                        resetLink: resetLink,
+                        emailSent: false
+                    });
+                }
+                
+                // In production, return error with helpful message
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Email service is not configured. Please contact support or check your email configuration.',
+                    error: 'EMAIL_SERVICE_NOT_CONFIGURED'
+                });
             }
             
-            // If email sending failed for other reasons
-            console.error('Failed to send password reset email:', emailResult.error);
+            // If FRONTEND_URI is missing in production
+            if (emailResult.error && emailResult.error.includes('FRONTEND_URI')) {
+                console.error('❌ FRONTEND_URI not set in production');
+                console.error('Please set FRONTEND_URI environment variable in your deployment settings');
+                
+                // Still try to use the detected frontend URL
+                if (resetLink) {
+                    console.log('Using detected frontend URL:', resetLink);
+                    // Return the link even if email failed, so user can still reset
+                    return res.status(200).json({
+                        success: true,
+                        message: 'Password reset link generated. Please check your email or contact support.',
+                        resetLink: resetLink,
+                        emailSent: false,
+                        warning: 'Email service may not be configured properly'
+                    });
+                }
+                
+                return res.status(500).json({ 
+                    success: false, 
+                    message: 'Configuration error. Please contact support.',
+                    error: 'FRONTEND_URI_MISSING'
+                });
+            }
+            
+            // If email sending failed for other reasons (network, SMTP error, etc.)
+            console.error('❌ Failed to send password reset email:', emailResult.error);
+            console.error('Error details:', emailResult);
+            
+            // In production, provide fallback link if available
+            if (isProduction && resetLink) {
+                return res.status(200).json({
+                    success: true,
+                    message: 'Password reset link generated. Email delivery failed, but you can use the link below.',
+                    resetLink: resetLink,
+                    emailSent: false,
+                    warning: 'Email delivery failed. Please save this link.'
+                });
+            }
+            
             return res.status(500).json({ 
                 success: false, 
-                message: 'Failed to send password reset email. Please try again later.' 
-            })
+                message: 'Failed to send password reset email. Please try again later or contact support.',
+                error: 'EMAIL_SEND_FAILED'
+            });
         }
 
         // Email sent successfully
@@ -251,7 +320,7 @@ const resetPassword = async (req, res) => {
 
         const user = await userModel.findOne({
             resetToken: hashedToken,
-            resetTokenExpiry: { $gt: Date.now() }
+            resetTokenExpiry: { $gt: new Date() }
         });
 
         if (!user) {
