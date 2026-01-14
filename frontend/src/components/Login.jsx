@@ -35,6 +35,8 @@ const Login = ({ modalRef }) => {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
                 modalRef.current?.close()
                 reset();
+                // Redirect to books page after successful login
+                navigate('/book');
             }
 
         } catch (error) {
@@ -81,11 +83,6 @@ const Login = ({ modalRef }) => {
                                         }
                                     })} 
                                 />
-                                {errors.email && (
-                                    <label className="label">
-                                        <span className="label-text-alt text-red-500">{errors.email.message}</span>
-                                    </label>
-                                )}
                             </div>
 
                             {/* Password Field */}
@@ -113,11 +110,7 @@ const Login = ({ modalRef }) => {
                                         {showPassword ? '👁️' : '👁️‍🗨️'}
                                     </button>
                                 </div>
-                                {errors.password && (
-                                    <label className="label">
-                                        <span className="label-text-alt text-red-500">{errors.password.message}</span>
-                                    </label>
-                                )}
+                                {/* Intentionally not showing inline error text below the field */}
                             </div>
 
                             {/* Forget Password Link */}
